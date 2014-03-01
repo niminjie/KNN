@@ -97,6 +97,17 @@ def isNum(value):
     else:
         return True
 
+def precision(result, target):
+    if len(result) != len(target):
+        print 'Result and target length must equal'
+        return 0
+    hits = 0
+    for i in range(len(result) - 1):
+        if result[i] == target[i]:
+            hits += 1
+    return hits * 1.0 / len(result)
+
+
 def classify0(inX, dataSet, labels, k):
     # Matrix row number
     dataSetSize = dataSet.shape[0]
@@ -127,10 +138,10 @@ def main():
     trainSet, testSet, trainLabel, testLabel = readFile(trainPath, testPath)
     trainMatrix, testMatrix = makeMatrix(trainSet, testSet)
 
-    print len(trainLabel)
-    print len(testLabel)
-    for row in testMatrix:
-        print classify0(row, trainMatrix, trainLabel, 10)
+    # print len(trainLabel)
+    # print len(testLabel)
+    result = [classify0(row, trainMatrix, trainLabel, 10) for row in testMatrix ]
+    print precision(result, testLabel)
 
 if __name__ == '__main__':
     main() 
