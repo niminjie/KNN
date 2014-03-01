@@ -3,6 +3,9 @@ import numpy as np
 import os
 import sys
 
+trainSet = '/Users/niminjie/Documents/workspace/PythonSrc/KNN/dataset/synth.te'
+testSet = '/Users/niminjie/Documents/workspace/PythonSrc/KNN/dataset/synth.tr'
+
 def dieWithUsage():
     print u'''
 |***********************How to use Neual Networds******************************|
@@ -22,8 +25,13 @@ def dieWithUsage():
     sys.exit(0)
 
 def getParams():
-    
-    if len(sys.argv) < 3:
+    global trainSet
+    global testSet
+
+    if len(sys.argv) == 1:
+        return 0
+
+    if len(sys.argv) == 2:
         print '-------------------------------------------------'
         print '******ERROR:Please input enough parameters!******'
         print '-------------------------------------------------'
