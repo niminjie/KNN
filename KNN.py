@@ -65,13 +65,13 @@ def readFile(trainPath, testPath, head = False):
     for line in open(trainPath, 'r'):
         row = convertToDouble(line.strip().split()[0:2])
         trainSet.append(row)
-        if len(line.strip().split()) >= 3:
+        if len(line.strip().split()) >= 3 and isNum(line.strip().split()[2]):
             trainLabel.append(float(line.strip().split()[2]))
 
     for line in open(testPath, 'r'):
         row = convertToDouble(line.strip().split()[0:2])
         testSet.append(row)
-        if len(line.strip().split()) >= 3:
+        if len(line.strip().split()) >= 3 and isNum(line.strip().split()[2]):
             testLabel.append(float(line.strip().split()[2]))
 
     if head == False:
@@ -95,14 +95,35 @@ def isNum(value):
     else:
         return True
 
+def classify0(inX, dataSet, labels, k):
+    # Matrix row number
+    dataSetSize = dataSet.shape[0]
+    '''
+    >>> np.tile(a, (2, 2))
+    array([[0, 1, 2, 0, 1, 2],
+       [0, 1, 2, 0, 1, 2]])
+    '''
+    diffMat = tile(inX, (dataSetSize, 1)) - dataSet
+    # Every element in the matrix ** 2
+    sqDiffMat = diffMat ** 2
+    sqDistances = sqDiffMat.sum(axis = 1)
+    distances = sqDistances ** 0.5
+    sortedDistIndicies = distances.argsort()
+    classCount = {}
+    for i in range(k):
+        voteIlabel = labels[sortedDistIndicies[i]]
+        classCount[voteIlabel] = classCount.get(voteIlabel, 0) + 1
+    print classCount
+    sortedClassCount = sorted(classCount.iteritems(), key = operator.itemgetter(1), reverse = True)
+    return sortedClassCount[0][0]
+
 def main():
     getParams()
     readFile(trainPath, testPath)
     trainSet, testSet, trainLabel, testLabel = readFile(trainPath, testPath)
-    print makeMatrix(trainSet, testSet)
-    # print trainSet
-    # print testSet
-    # print testLabel
+    trainMatrix, testMatrix = makeMatrix(trainSet, testSet)
+    test = array([1, 2])
+    print classify0(test, trainMatrix, trainLabel, 100)
 
 if __name__ == '__main__':
     main() 
