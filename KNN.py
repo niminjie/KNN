@@ -65,17 +65,19 @@ def readFile(trainPath, testPath, head = False):
     for line in open(trainPath, 'r'):
         row = convertToDouble(line.strip().split()[0:2])
         trainSet.append(row)
-        if len(line.strip().split()) >= 3 and isNum(line.strip().split()[2]):
+        # if len(line.strip().split()) >= 3 and isNum(line.strip().split()[2]):
+        if isNum(line.strip().split()[2]):
             trainLabel.append(float(line.strip().split()[2]))
 
     for line in open(testPath, 'r'):
         row = convertToDouble(line.strip().split()[0:2])
         testSet.append(row)
-        if len(line.strip().split()) >= 3 and isNum(line.strip().split()[2]):
+        # if len(line.strip().split()) >= 3 and isNum(line.strip().split()[2]):
+        if isNum(line.strip().split()[2]):
             testLabel.append(float(line.strip().split()[2]))
 
     if head == False:
-         return trainSet[1:], testSet[1:], trainLabel[1:], testLabel[1:]
+         return trainSet[1:], testSet[1:], trainLabel, testLabel
     else:
          return trainSet, testSet, trainLabel, testLabel
 
@@ -111,9 +113,11 @@ def classify0(inX, dataSet, labels, k):
     sortedDistIndicies = distances.argsort()
     classCount = {}
     for i in range(k):
+        # print sortedDistIndicies[i]
         voteIlabel = labels[sortedDistIndicies[i]]
         classCount[voteIlabel] = classCount.get(voteIlabel, 0) + 1
-    print classCount
+    #print classCount
+    # Itemgetter: Get 1th value(index starts with 0)
     sortedClassCount = sorted(classCount.iteritems(), key = operator.itemgetter(1), reverse = True)
     return sortedClassCount[0][0]
 
@@ -122,8 +126,11 @@ def main():
     readFile(trainPath, testPath)
     trainSet, testSet, trainLabel, testLabel = readFile(trainPath, testPath)
     trainMatrix, testMatrix = makeMatrix(trainSet, testSet)
-    test = array([1, 2])
-    print classify0(test, trainMatrix, trainLabel, 100)
+
+    print len(trainLabel)
+    print len(testLabel)
+    for row in testMatrix:
+        print classify0(row, trainMatrix, trainLabel, 10)
 
 if __name__ == '__main__':
     main() 
