@@ -140,8 +140,9 @@ def main():
 
     # print len(trainLabel)
     # print len(testLabel)
-    result = [classify0(row, trainMatrix, trainLabel, 10) for row in testMatrix ]
-    print precision(result, testLabel)
+    for k in range(1, 1000, 2):
+        result = [classify0(row, trainMatrix, trainLabel, k) for row in testMatrix ]
+        print precision(result, testLabel)
 
 if __name__ == '__main__':
     main() 
