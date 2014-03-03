@@ -50,6 +50,8 @@ def isLeaf(kdNode):
 def searchTree(kdTree, target, k):
     # Create a stck to store search path
     stack = []
+    nearestList = []
+    distanceList = []
     # Store root node
     kdPoint = kdTree
 
@@ -63,31 +65,50 @@ def searchTree(kdTree, target, k):
             kdPoint = kdPoint.right
 
     nearest = stack[-1].data
-    del(stack[-1])
     distance = dist(nearest, target)
-    print 'Finish search'
+    nearestList.append(nearest)
+    distanceList.append(distance)
+
+    del(stack[-1])
+    #print 'Finish search'
+
     while len(stack) > 0:
         backPoint = stack[-1]
-        print 'backPoint in traverse', backPoint.data
+        #print 'backPoint in traverse', backPoint.data
         del(stack[-1])
         if isLeaf(backPoint):
-            if dist(nearest, target) > dist(backPoint.data, target):
+            if len(nearestList) <= k:
                 nearest = backPoint.data
                 distance = dist(backPoint.data, target)
-                print 'In if dist near and back', nearest, distance
+                nearestList.append(nearest)
+                distanceList.append(distance)
+            else:
+                if max(distanceList) > dist(backPoint.data, target):
+                    idx = np.argmax(distanceList)
+                    nearest = backPoint.data
+                    distance = dist(backPoint.data, target)
+                    nearestList[idx] = nearest
+                    distanceList[idx] = distance
         else:
             axis = backPoint.axis
             if abs(backPoint.data[axis] - target[axis]) < distance:
-                if dist(nearest, target) > dist(backPoint.data, target):
+                if len(nearestList) <= k:
                     nearest = backPoint.data
                     distance = dist(backPoint.data, target)
+                    nearestList.append(nearest)
+                    distanceList.append(distance)
+                else:
+                    if max(distanceList) > dist(backPoint.data, target):
+                        idx = np.argmax(distanceList)
+                        nearest = backPoint.data
+                        distance = dist(backPoint.data, target)
+                        nearestList[idx] = nearest
+                        distanceList[idx] = distance
                 if target[axis] <= backPoint.data[axis]:
                     kdPoint = backPoint.right
                 else:
                     kdPoint = backPoint.left
             if len(stack) > 0 and kdPoint.data != None:
                 stack.append(kdPoint)
-                print 'Append:', kdPoint.data
-
-    return nearest
-
+                #print 'Append:', kdPoint.data
+    return nearestList
