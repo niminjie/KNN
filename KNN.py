@@ -1,4 +1,6 @@
 from numpy import *
+import datetime
+import time
 import operator
 import math
 import os
@@ -132,17 +134,25 @@ def classify0(inX, dataSet, labels, k):
     sortedClassCount = sorted(classCount.iteritems(), key = operator.itemgetter(1), reverse = True)
     return sortedClassCount[0][0]
 
+def classifyKdTree(inX, dataSet, labels, k):
+    pass
+
+
 def main():
     getParams()
     readFile(trainPath, testPath)
     trainSet, testSet, trainLabel, testLabel = readFile(trainPath, testPath)
     trainMatrix, testMatrix = makeMatrix(trainSet, testSet)
-
     # print len(trainLabel)
     # print len(testLabel)
-    for k in range(1, 1000, 2):
+    for k in range(1, 31):
         result = [classify0(row, trainMatrix, trainLabel, k) for row in testMatrix ]
-        print precision(result, testLabel)
+        print precision(result, testLabel), k
 
 if __name__ == '__main__':
-    main() 
+    # starttime = datetime.datetime.now()
+    starttime = time.clock()
+    main()
+    # endtime = datetime.datetime.now() 
+    endtime = time.clock()
+    print 'Finished in %s s' %(endtime - starttime)
