@@ -2,4 +2,5 @@ import sys
 import os
 
 class KDNode:
-    pass
+    def __init__(self):
+        pass
