@@ -86,7 +86,6 @@ class KDTree:
 			#ans.insert(tp)
 		return ans
 
-
 	def to_leaf(self,P,x,pf_seq,ans):
 		tp=P
 		if tp!=None:

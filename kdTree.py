@@ -16,6 +16,7 @@ class KDNode(Node):
         self.dimensions = dimensions
 
 def createTree(dataList = None, dimensions = None, axis = 0, sel_axis = None):
+    set_trace()
     if not dataList and not dimensions:
         raise ValueError('List or dimensions must be provided')
 
