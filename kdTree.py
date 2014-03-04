@@ -108,7 +108,54 @@ def searchTree(kdTree, target, k):
                     kdPoint = backPoint.right
                 else:
                     kdPoint = backPoint.left
-            if len(stack) > 0 and kdPoint.data != None:
-                stack.append(kdPoint)
-                #print 'Append:', kdPoint.data
+                if kdPoint.data != None:
+                    stack.append(kdPoint)
+                    #print 'Append:', kdPoint.data
     return nearestList
+
+
+def searchTree2(kdTree, target, k):
+    # Create a stck to store search path
+    stack = []
+    # Store root node
+    kdPoint = kdTree
+
+    # Find the first leaf and generate search path
+    while kdPoint.data != None:
+        stack.append(kdPoint)
+        axis = kdPoint.axis
+        if target[axis] <= kdPoint.data[axis]:
+            kdPoint = kdPoint.left
+        else:
+            kdPoint = kdPoint.right
+    #set_trace()
+    nearest = stack[-1].data
+    del(stack[-1])
+    distance = dist(nearest, target)
+    # print 'Finish search'
+    while len(stack) > 0:
+        backPoint = stack[-1]
+        # print 'backPoint in traverse', backPoint.data
+        del(stack[-1])
+        if isLeaf(backPoint):
+            if dist(nearest, target) > dist(backPoint.data, target):
+                nearest = backPoint.data
+                print nearest
+                distance = dist(backPoint.data, target)
+                # print 'In if dist near and back', nearest, distance
+        else:
+            axis = backPoint.axis
+            if abs(backPoint.data[axis] - target[axis]) < distance:
+                if dist(nearest, target) > dist(backPoint.data, target):
+                    nearest = backPoint.data
+                    print nearest
+                    distance = dist(backPoint.data, target)
+                if target[axis] <= backPoint.data[axis]:
+                    kdPoint = backPoint.right
+                else:
+                    kdPoint = backPoint.left
+                if kdPoint.data != None:
+                    #if len(stack) > 0:
+                    stack.append(kdPoint)
+                    #print 'Append:', kdPoint.data
+    return nearest

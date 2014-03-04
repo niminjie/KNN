@@ -7,8 +7,8 @@ import math
 import os
 import sys
 
-trainPath = '/Users/niminjie/Documents/workspace/PythonSrc/KNN/dataset/synth.te'
-testPath = '/Users/niminjie/Documents/workspace/PythonSrc/KNN/dataset/synth.tr'
+trainPath = '/Users/niminjie/Documents/workspace/PythonSrc/KNN/dataset/synth.tr'
+testPath = '/Users/niminjie/Documents/workspace/PythonSrc/KNN/dataset/synth.te'
 
 def dieWithUsage():
     print u'''
@@ -157,15 +157,14 @@ def classify0(inX, dataSet, labels, k):
         # print sortedDistIndicies[i]
         voteIlabel = labels[sortedDistIndicies[i]]
         classCount[voteIlabel] = classCount.get(voteIlabel, 0) + 1
-    #print classCount
+    # print classCount
     # Itemgetter: Get 1th value(index starts with 0)
     sortedClassCount = sorted(classCount.iteritems(), key = operator.itemgetter(1), reverse = True)
     return sortedClassCount[0][0]
 
-def classifyKdTree(inX, trainSet, k = 1):
-    tree = kdTree.createTree(trainSet.keys())
+def classifyKdTree(inX, tree, k = 1):
     nearest = kdTree.searchTree(tree, inX, k)
-    print nearest
+    return nearest
 
 def main():
     getParams()
@@ -173,13 +172,28 @@ def main():
     # trainSet, testSet, trainLabel, testLabel = readFile(trainPath, testPath)
     # trainMatrix, testMatrix = makeMatrix(trainSet, testSet)
     trainSet, testSet = fileToDict(trainPath, testPath)
+    print len(trainSet), len(testSet)
     # print testSet
     # print len(trainLabel)
     # print len(testLabel)
     # for k in range(1, 31):
     #     result = [classify0(row, trainMatrix, trainLabel, k) for row in testMatrix ]
     #     print precision(result, testLabel), k
-    classifyKdTree([2,2.5], trainSet, 1)
+    tree = kdTree.createTree(trainSet.keys())
+
+    for k in range(1, 31):
+        hits = 0
+        for target,tl in testSet.items():
+           nearest = classifyKdTree(target, tree, k)
+           label = {}
+           for near in nearest:
+               l = trainSet[near]
+               label[l] = label.get(l, 0) + 1
+           targetLabel = sorted(label.iteritems(), key = operator.itemgetter(1), reverse = True)[0][0]
+           #print targetLabel, tl
+           if targetLabel == tl:
+               hits += 1
+        print hits * 1.0 / 1000
 
 if __name__ == '__main__':
     # starttime = datetime.datetime.now()
