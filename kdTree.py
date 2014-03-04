@@ -34,7 +34,7 @@ def createTree(dataList = None, dimensions = None, axis = 0, sel_axis = None):
     return KDNode(loc, left, right, axis = axis, sel_axis = sel_axis)
 
 def dist(nearest, target):
-    print nearest, target
+    # print nearest, target
     nearMx = np.array(nearest)
     targetM = np.array(target)
     diff = (nearMx - targetM) ** 2
@@ -77,7 +77,7 @@ def searchTree(kdTree, target, k):
         #print 'backPoint in traverse', backPoint.data
         del(stack[-1])
         if isLeaf(backPoint):
-            if len(nearestList) <= k:
+            if len(nearestList) < k:
                 nearest = backPoint.data
                 distance = dist(backPoint.data, target)
                 nearestList.append(nearest)
@@ -92,7 +92,7 @@ def searchTree(kdTree, target, k):
         else:
             axis = backPoint.axis
             if abs(backPoint.data[axis] - target[axis]) < distance:
-                if len(nearestList) <= k:
+                if len(nearestList) < k:
                     nearest = backPoint.data
                     distance = dist(backPoint.data, target)
                     nearestList.append(nearest)

@@ -1,4 +1,5 @@
 from numpy import *
+import kdTree
 import datetime
 import time
 import operator
@@ -83,6 +84,33 @@ def readFile(trainPath, testPath, head = False):
     else:
          return trainSet, testSet, trainLabel, testLabel
 
+
+def fileToDict(trainPath, testPath, head = False):
+    trainSet, testSet= {}, {}
+
+    for line in open(trainPath):
+        flag = False
+        for i in line.strip().split():
+            if not isNum(i):
+                flag = True
+        if flag == True:
+            continue
+        key = tuple(convertToDouble(line.strip().split()[0:2]))
+        value = int(line.strip().split()[-1])
+        trainSet.setdefault(key, value)
+
+    for line in open(testPath):
+        flag = False
+        for i in line.strip().split():
+            if not isNum(i):
+                flag = True
+        if flag == True:
+            continue
+        key = tuple(convertToDouble(line.strip().split()[0:2]))
+        value = int(line.strip().split()[-1])
+        testSet.setdefault(key, value)
+    return trainSet, testSet
+
 def makeMatrix(trainSet, testSet):
     trainMatrix = array(trainSet)
     testMatrix = array(testSet)
@@ -134,20 +162,24 @@ def classify0(inX, dataSet, labels, k):
     sortedClassCount = sorted(classCount.iteritems(), key = operator.itemgetter(1), reverse = True)
     return sortedClassCount[0][0]
 
-def classifyKdTree(inX, dataSet, labels, k):
-    pass
-
+def classifyKdTree(inX, trainSet, k = 1):
+    tree = kdTree.createTree(trainSet.keys())
+    nearest = kdTree.searchTree(tree, inX, k)
+    print nearest
 
 def main():
     getParams()
-    readFile(trainPath, testPath)
-    trainSet, testSet, trainLabel, testLabel = readFile(trainPath, testPath)
-    trainMatrix, testMatrix = makeMatrix(trainSet, testSet)
+    # readFile(trainPath, testPath)
+    # trainSet, testSet, trainLabel, testLabel = readFile(trainPath, testPath)
+    # trainMatrix, testMatrix = makeMatrix(trainSet, testSet)
+    trainSet, testSet = fileToDict(trainPath, testPath)
+    # print testSet
     # print len(trainLabel)
     # print len(testLabel)
-    for k in range(1, 31):
-        result = [classify0(row, trainMatrix, trainLabel, k) for row in testMatrix ]
-        print precision(result, testLabel), k
+    # for k in range(1, 31):
+    #     result = [classify0(row, trainMatrix, trainLabel, k) for row in testMatrix ]
+    #     print precision(result, testLabel), k
+    classifyKdTree([2,2.5], trainSet, 1)
 
 if __name__ == '__main__':
     # starttime = datetime.datetime.now()

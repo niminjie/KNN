@@ -1,0 +1,49 @@
+from numpy import *
+import time
+import math
+
+
+class KDNode():
+    ''' Create a kd tree node:
+        idx            Index in dataset
+        left           Left child node
+        right          Right child node
+        axis           Current split plane
+        sel_axis       Which should select next 
+    '''
+    def __init__(self, idx = None, value = None,left = None, right = None, axis = None, sel_axis = None, dimensions = None):
+        self.idx = idx
+        self.value = value
+        self.left = left
+        self.right = right
+        self.axis = axis
+        self.sel_axis = sel_axis
+        self.dimensions = dimensions
+
+def createTree(pointList, idx = None, axis = 0, sel_axis = None, dimensions = None):
+    nList = list(pointList)
+    if pointList == None and not dimensions:
+        raise ValueError('List or dimensions must be provided')
+    elif pointList != None:
+        dimensions = dimensions or len(pointList[0])
+    if pointList == None:
+        return KDNode(idx = -1, sel_axis = sel_axis, axis = axis, dimensions = dimensions)
+
+    sel_axis = sel_axis or (lambda prev_axis: (prev_axis + 1) % dimensions) 
+    list(pointList).sort(key = lambda point: point[axis]) 
+    median = len(pointList) // 2
+    value = pointList[median]
+    left = createTree(pointList[:median], dimensions, axis = sel_axis(axis))
+    right = createTree(pointList[median + 1:], dimensions, axis = sel_axis(axis))
+    return KDNode(median, value,left, right, axis = axis, sel_axis = sel_axis)
+
+def test():
+    trainMat = array([[7,2], [5,4] ,[2,3] ,[4,7], [9,6], [8,1]])
+    label = array([1,1,1,0,0,0])
+    createTree(trainMat)
+
+if __name__ == '__main__':
+    starttime = time.clock() 
+    test()
+    endtime = time.clock() 
+    print 'Finished in %s s' % (starttime - endtime)
