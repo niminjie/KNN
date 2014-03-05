@@ -2,5 +2,11 @@ import sys
 import os
 
 class KDNode:
-    def __init__(self):
-        pass
+    pass
+
+def createTree(kdNode, pointList, depth):
+    if pointList == None:
+        return None
+
+    axis = depth % len(pointList[0])
+    node.left = createTree()
